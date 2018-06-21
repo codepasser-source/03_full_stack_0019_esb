@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" version="CE-3.3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd 
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd 
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd ">
+    <flow name="get-router-info-by-header-subflow" doc:name="get-router-info-by-header-subflow">
+        <vm:inbound-endpoint exchange-pattern="request-response" path="get-router-info-soap" doc:name="subflow entry"/>
+        <echo-component doc:name="Echo"/>
+        <scripting:component doc:name="router info in body (HTTP/XML)">
+            <scripting:script engine="Groovy" file="router_by_header.groovy"/>
+        </scripting:component>
+    </flow>
+    <flow name="taiping-esb-head-main-flow" doc:name="taiping-esb-head-main-flow">
+        <http:inbound-endpoint exchange-pattern="request-response" address="http://localhost:8888/esb" doc:name="esb entry (http)"/>
+        <logger message="===router=== #[groovy:message.toString()]" level="DEBUG" doc:name="Logger Router"/>
+        <component doc:name="Add DB Log(01)">
+            <spring-object bean="DBLogComponentMsg01"/>
+        </component>
+        <component doc:name="Get Routers">
+            <spring-object bean="GetRoutersComponent"/>
+        </component>
+        <flow-ref name="get-router-info-by-header-subflow" doc:name="get router info"/>
+        <component doc:name="Add DB Log(02)">
+            <spring-object bean="DBLogComponentMsg02"/>
+        </component>
+        <logger message="=== before request === #[groovy:message.getSessionProperty('tp-esb-router').contentType]" level="INFO" doc:name="Logger Before Request"/>
+        <set-property propertyName="Content-Type" value="#[groovy:message.getSessionProperty('tp-esb-router').contentType]" doc:name="Set Content-Type property"/>
+        <http:outbound-endpoint exchange-pattern="request-response" 
+           address="http://#[groovy:message.getSessionProperty('tp-esb-router').address]" 
+           encoding="#[groovy:message.getSessionProperty('tp-esb-router').encoding]"
+           doc:name="HTTP" />
+        <logger message="=== after request=== #[groovy:message.toString()]" level="INFO" doc:name="Logger After Request"/>
+        <set-property propertyName="Content-Type" value="#[groovy:message.getInboundProperty('Content-Type')]" doc:name="Set Content-Type property"/>
+        <component doc:name="Add DB Log(04)">
+            <spring-object bean="DBLogComponentMsg04"/>
+        </component>
+        <!-- 
+        <async doc:name="Async">
+            <logger message="===after request=== #[groovy:message.toString()]" level="DEBUG" doc:name="Logger After Request"/>
+            <component doc:name="Add DB Log(04)">
+                <spring-object bean="DBLogComponentMsg04"/>
+            </component>
+        </async>
+         -->
+        <catch-exception-strategy doc:name="Catch Exception Strategy">
+            <async doc:name="Async">
+                <logger message="#[groovy:exception.cause]" level="DEBUG" doc:name="Logger"/>
+            </async>
+            <scripting:component doc:name="Error Handling">
+                <scripting:script engine="Groovy" file="error_handling_by_header.groovy"/>
+            </scripting:component>
+            <component doc:name="Add Error Log">
+                <spring-object bean="DBLogComponentError"/>
+            </component>
+            <http:response-builder status="500" contentType="text/xml;charset=utf-8" doc:name="HTTP Response Builder"/>
+        </catch-exception-strategy>
+    </flow>
+</mule>

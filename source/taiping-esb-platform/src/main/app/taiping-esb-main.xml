@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule version="CE-3.3.1"  xmlns:jdbc="http://www.mulesoft.org/schema/mule/jdbc" 
+xmlns="http://www.mulesoft.org/schema/mule/core" 
+xmlns:vm="http://www.mulesoft.org/schema/mule/vm" 
+xmlns:http="http://www.mulesoft.org/schema/mule/http" 
+xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" 
+xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" 
+xmlns:spring="http://www.springframework.org/schema/beans" 
+xmlns:core="http://www.mulesoft.org/schema/mule/core" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xmlns:context="http://www.springframework.org/schema/context"
+xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd 
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd 
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd 
+http://www.mulesoft.org/schema/mule/jdbc http://www.mulesoft.org/schema/mule/jdbc/current/mule-jdbc.xsd 
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd ">
+    <spring:beans>
+        <context:component-scan base-package="com.taiping.esb"></context:component-scan>
+    </spring:beans>
+    <!-- 全局Beans定义  -->
+    <spring:beans>
+        <spring:bean id="ESBDataSource" name="ESBDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource" scope="singleton" lazy-init="false">
+            <spring:property name="driverClassName" value="${driverClassName}"/>
+            <spring:property name="url" value="${jdbcurl}"/>
+            <spring:property name="username" value="${username}"/>
+            <spring:property name="password" value="${password}"/>
+        </spring:bean>
+        <spring:bean id="GetRoutersComponent" name="GetRoutersComponent" class="com.taiping.esb.GetRoutersComponent" scope="singleton" >
+            <spring:property name="runtimeMode" value="${runtimeMode}" />
+        </spring:bean>
+         <spring:bean id="QueryServicesComponent" name="QueryServicesComponent" class="com.taiping.esb.QueryServicesComponent" scope="singleton" >
+        </spring:bean>
+        <spring:bean id="DBLogComponentMsg01" name="DBLogComponentMsg01" class="com.taiping.esb.DBLogComponent" scope="prototype">
+            <spring:property name="msgType" value="01"/>
+            <spring:property name="operation" value="msg"/>
+        </spring:bean>
+        <spring:bean id="DBLogComponentMsg02" name="DBLogComponentMsg02" class="com.taiping.esb.DBLogComponent" scope="prototype">
+            <spring:property name="msgType" value="02"/>
+            <spring:property name="operation" value="msg"/>
+        </spring:bean>
+        <spring:bean id="DBLogComponentMsg03" name="DBLogComponentMsg03" class="com.taiping.esb.DBLogComponent">
+            <spring:property name="msgType" value="03"/>
+            <spring:property name="operation" value="msg"/>
+        </spring:bean>
+        <spring:bean id="DBLogComponentMsg04" name="DBLogComponentMsg04" class="com.taiping.esb.DBLogComponent">
+            <spring:property name="msgType" value="04"/>
+            <spring:property name="operation" value="msg"/>
+        </spring:bean>
+        <spring:bean id="DBLogComponentMsg05" name="DBLogComponentMsg05" class="com.taiping.esb.DBLogComponent">
+            <spring:property name="msgType" value="05"/>
+            <spring:property name="operation" value="msg"/>
+        </spring:bean>
+        <spring:bean id="DBLogComponentError" name="DBLogComponentError" class="com.taiping.esb.DBLogComponent">
+            <spring:property name="operation" value="err"/>
+        </spring:bean>
+    </spring:beans>
+    
+    <!-- 无 Mule Session Http 连接 -->
+    <http:connector name="NoSessionConnector" doc:name="HTTP\HTTPS">
+		<service-overrides sessionHandler="org.mule.session.NullSessionHandler"/>
+	</http:connector>
+	
+	<!-- ESB Helper：显示服务列表  -->
+    <flow name="esb-helper" doc:name="esb-helper">
+        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="9999" path="services" doc:name="HTTP"/>
+        <component doc:name="Query Service List" >
+            <spring-object bean="QueryServicesComponent"/>
+        </component>
+        <scripting:transformer doc:name="Display Html">
+            <scripting:script engine="Groovy" file="display_services.groovy"/>
+        </scripting:transformer>
+        <http:response-builder status="200" contentType="text/html; charset=utf-8" doc:name="HTTP Response Builder">
+        </http:response-builder>
+    </flow>
+    
+    <flow name="get-dispatch-info-subflow" doc:name="get-dispatch-info-subflow">
+        <vm:inbound-endpoint exchange-pattern="request-response" path="get-dispatch-info" doc:name="subflow entry"/>
+        <echo-component doc:name="Echo"/>
+        <scripting:component doc:name="get dispatch info">
+            <scripting:script engine="Groovy" file="dispatch.groovy"/>
+        </scripting:component>
+    </flow>
+    
+    <!-- 获取路由信息 -->
+    <flow name="get-router-info-subflow" doc:name="get-router-info-subflow">
+        <vm:inbound-endpoint exchange-pattern="request-response" path="get-router-info" doc:name="subflow entry"/>
+        <echo-component doc:name="Echo"/>
+     	<scripting:component doc:name="router info in body (HTTP/XML)">
+          <scripting:script engine="Groovy" file="router.groovy"/>
+        </scripting:component>
+        <object-to-string-transformer doc:name="Object to String"/>
+    </flow>
+    
+    <!-- 请求报文变换  -->
+    <flow name="request-message-transform-subflow" doc:name="request-message-transform-subflow">
+        <vm:inbound-endpoint exchange-pattern="request-response" path="input-transform" doc:name="subflow entry"/>
+        <echo-component doc:name="Echo"/>
+        <scripting:transformer doc:name="request message transform">
+            <scripting:script engine="Groovy" file="transform_request_form.groovy"/>
+        </scripting:transformer>
+
+        <message-properties-transformer doc:name="Set Content Type">
+            <delete-message-property key="Content-type" />
+            <add-message-property key="Content-Type" value="#[groovy:message.getSessionProperty('tp-esb-router').contentType]"/>
+        </message-properties-transformer>       
+    </flow>
+    
+    <!-- 返回报文变换  -->
+    <flow name="response-message-transform-subflow" doc:name="response-message-transform-subflow">
+        <vm:inbound-endpoint exchange-pattern="request-response" path="output-transform" doc:name="subflow entry"/>
+        <echo-component doc:name="Echo"/>
+        <object-to-string-transformer doc:name="Object to String"/>
+        <scripting:transformer doc:name="response message transform">
+            <scripting:script engine="Groovy" file="transform_response.groovy"/>
+        </scripting:transformer>
+        <message-properties-transformer doc:name="Set Content Type">
+            <add-message-property key="Content-Type" value="text/xml"/>
+        </message-properties-transformer>
+    </flow>
+    
+    <!-- ESB 服务流主管道 start -->
+    <flow name="taiping-esb-main-flow" doc:name="taiping-esb-main-flow">
+        <http:inbound-endpoint exchange-pattern="request-response" address="http://localhost:9999/esb" doc:name="esb entry (http)"/>
+        <logger message="===router=== #[groovy:message.toString()]" level="DEBUG" doc:name="Logger Router"/>
+        <component doc:name="Add DB Log(01)">
+            <spring-object bean="DBLogComponentMsg01" />
+        </component>
+        <component doc:name="Get Routers">
+            <spring-object bean="GetRoutersComponent"/>
+        </component>
+        <async doc:name="Async">
+            <logger message="===router=== #[groovy:message.toString()]" level="DEBUG" doc:name="Logger Router"/>
+        </async>
+        <flow-ref name="get-router-info-subflow" doc:name="get router info"/>
+        <async doc:name="Async">
+            <logger message="===transform=== #[groovy:message.toString()]" level="DEBUG" doc:name="Logger Transformer"/>
+            <component doc:name="Add DB Log(02)">
+                <spring-object bean="DBLogComponentMsg02"/>
+            </component>
+        </async>
+        <flow-ref name="request-message-transform-subflow" doc:name="request message transform"/>
+        <async doc:name="Async">
+            <logger message="===before request=== #[groovy:message.toString()]" level="DEBUG" doc:name="Logger Before Request"/>
+            <component doc:name="Add DB Log(03)">
+                <spring-object bean="DBLogComponentMsg03" />
+            </component>
+        </async>
+        
+        <http:outbound-endpoint exchange-pattern="request-response" doc:name="HTTP" 
+              address="http://#[groovy:message.getSessionProperty('tp-esb-router').address]" 
+              encoding="#[groovy:message.getSessionProperty('tp-esb-router').encoding]" />               
+        <flow-ref name="response-message-transform-subflow" doc:name="response message transform"/>
+        <async doc:name="Async">
+            <logger message="===after request=== #[groovy:message.toString()]" level="DEBUG" doc:name="Logger After Request"/>
+            <component doc:name="Add DB Log(04)">
+                <spring-object bean="DBLogComponentMsg04"/>
+            </component>
+        </async>
+        
+        <catch-exception-strategy doc:name="Catch Exception Strategy">
+            <async doc:name="Async">
+                <logger message="#[groovy:exception.cause]" level="INFO" doc:name="Logger"/>
+            </async>
+            <scripting:component doc:name="Error Handling">
+                <scripting:script engine="Groovy" file="error_handling.groovy"/>
+            </scripting:component>
+	        <component doc:name="Add Error Log">
+	            <spring-object bean="DBLogComponentError"/>
+	        </component>
+        </catch-exception-strategy>
+    </flow>
+    <!-- ESB 服务流主管道 end -->
+</mule>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" version="CE-3.3.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd 
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd 
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd ">
+    <spring:beans>
+        <spring:bean id="ServicesComponent" name="ServicesComponent" class="matt.damon.esb.component.ServicesComponent"/>
+        <spring:bean id="DBLogComponent" name="DBLogComponent" class="matt.damon.esb.component.DBLogComponent" scope="singleton"/>
+        <spring:bean id="RoutersComponent" name="RoutersComponent" class="matt.damon.esb.component.RoutersComponent" scope="singleton"/>
+    </spring:beans>
+	<flow name="mule-esb-helper-flow" doc:name="mule-esb-helper-flow">
+		<http:inbound-endpoint exchange-pattern="request-response"
+			host="localhost" port="9999" doc:name="SERVICES-HTTP" path="esb/services" />
+        <echo-component doc:name="SERVICES-ECHO"/>
+        <component doc:name="SERVICES-COMPONENT">
+            <spring-object bean="ServicesComponent"/>
+        </component>
+        <scripting:component doc:name="SERVICES-DATA">
+            <scripting:script engine="Groovy" file="display_services.groovy"/>
+        </scripting:component>
+        <http:response-builder status="200" contentType="text/html; charset=utf-8" doc:name="SERVICES-HTTP RESPONSE"/>
+	</flow>
+    <flow name="mule-esb-main-flow" doc:name="mule-esb-main-flow">
+        <http:inbound-endpoint exchange-pattern="request-response" address="http://localhost:9999/esb" doc:name="Esb Entry HTTP"/>
+        <logger message="===router0=== #[groovy:message.toString()]" level="DEBUG" doc:name="Logger"/>
+        <component doc:name="DB Logger(1)">
+            <spring-object bean="DBLogComponent"/>
+        </component>
+        <component doc:name="Router List">
+            <spring-object bean="RoutersComponent"/>
+        </component>
+        <async doc:name="Async">
+            <logger message="===router1=== #[groovy:message.toString()]" level="DEBUG" doc:name="Router Logger"/>
+        </async>
+    </flow>
+</mule>

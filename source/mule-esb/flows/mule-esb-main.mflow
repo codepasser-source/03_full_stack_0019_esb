@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mule-configuration xmlns="http://www.mulesoft.com/tooling/messageflow" name="mule-esb-main">
+    <global-element name="Bean" type="http://www.springframework.org/schema/beans/bean" entity-id="Bean#1">
+        <properties>
+            <property name="id" value="ServicesComponent"/>
+            <property name="name" value="ServicesComponent"/>
+            <property name="class" value="matt.damon.esb.component.ServicesComponent"/>
+            <property name="parent"/>
+            <property name="scope"/>
+            <property name="children"/>
+            <property name="auxiliary;index" value="2"/>
+            <property name="auxiliary;wrapIn" value="1"/>
+            <property name="auxiliary;index" value="2"/>
+            <property name="auxiliary;wrapIn" value="1"/>
+            <property name="abstract"/>
+            <property name="lazy-init"/>
+            <property name="autowire"/>
+            <property name="depends-on"/>
+            <property name="autowire-candidate"/>
+            <property name="primary"/>
+            <property name="init-method"/>
+            <property name="destroy-method"/>
+            <property name="factory-method"/>
+            <property name="factory-bean"/>
+            <property name="auxiliary;index" value="2"/>
+            <property name="auxiliary;wrapIn" value="1"/>
+            <property name="auxiliary;index" value="2"/>
+            <property name="auxiliary;wrapIn" value="1"/>
+            <property name="auxiliary;index" value="2"/>
+            <property name="auxiliary;wrapIn" value="1"/>
+        </properties>
+    </global-element>
+    <global-element name="Bean" type="http://www.springframework.org/schema/beans/bean" entity-id="Bean#2">
+        <properties>
+            <property name="id" value="DBLogComponent"/>
+            <property name="name" value="DBLogComponent"/>
+            <property name="class" value="matt.damon.esb.component.DBLogComponent"/>
+            <property name="parent"/>
+            <property name="scope" value="singleton"/>
+            <property name="children"/>
+            <property name="auxiliary;index" value="3"/>
+            <property name="auxiliary;wrapIn" value="1"/>
+            <property name="auxiliary;index" value="3"/>
+            <property name="auxiliary;wrapIn" value="1"/>
+            <property name="abstract"/>
+            <property name="lazy-init"/>
+            <property name="autowire"/>
+            <property name="depends-on"/>
+            <property name="autowire-candidate"/>
+            <property name="primary"/>
+            <property name="init-method"/>
+            <property name="destroy-method"/>
+            <property name="factory-method"/>
+            <property name="factory-bean"/>
+            <property name="auxiliary;index" value="3"/>
+            <property name="auxiliary;wrapIn" value="1"/>
+            <property name="auxiliary;index" value="3"/>
+            <property name="auxiliary;wrapIn" value="1"/>
+            <property name="auxiliary;index" value="3"/>
+            <property name="auxiliary;wrapIn" value="1"/>
+        </properties>
+    </global-element>
+    <global-element name="Bean" type="http://www.springframework.org/schema/beans/bean" entity-id="Bean#3">
+        <properties>
+            <property name="id" value="RoutersComponent"/>
+            <property name="name" value="RoutersComponent"/>
+            <property name="class" value="matt.damon.esb.component.RoutersComponent"/>
+            <property name="parent"/>
+            <property name="scope" value="singleton"/>
+            <property name="children"/>
+            <property name="auxiliary;index" value="4"/>
+            <property name="auxiliary;wrapIn" value="1"/>
+            <property name="auxiliary;index" value="4"/>
+            <property name="auxiliary;wrapIn" value="1"/>
+            <property name="abstract"/>
+            <property name="lazy-init"/>
+            <property name="autowire"/>
+            <property name="depends-on"/>
+            <property name="autowire-candidate"/>
+            <property name="primary"/>
+            <property name="init-method"/>
+            <property name="destroy-method"/>
+            <property name="factory-method"/>
+            <property name="factory-bean"/>
+            <property name="auxiliary;index" value="4"/>
+            <property name="auxiliary;wrapIn" value="1"/>
+            <property name="auxiliary;index" value="4"/>
+            <property name="auxiliary;wrapIn" value="1"/>
+            <property name="auxiliary;index" value="4"/>
+            <property name="auxiliary;wrapIn" value="1"/>
+        </properties>
+    </global-element>
+    <flow SubFlow="false" name="mule-esb-helper-flow" entity-id="7bd45ba3-6d14-4382-b44f-576ea4b7405d">
+        <properties>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="auxiliary;index" value="5"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="5"/>
+            <property name="auxiliary;index" value="5"/>
+            <property name="auxiliary;index" value="5"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#1">
+            <endpoint direction="Inbound" message-exchange-pattern="OneWay" name="SERVICES-HTTP" type="http://www.mulesoft.org/schema/mule/http/endpoint" entity-id="HTTP#1">
+                <properties>
+                    <property name="exchange-pattern" value="one-way"/>
+                    <property name="exchange-pattern" value="request-response"/>
+                    <property name="auxiliary;index" value="6"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/http/endpoint"/>
+                    <property name="auxiliary;index" value="6"/>
+                    <property name="httpLabel"/>
+                    <property name="host" value="localhost"/>
+                    <property name="port" value="9999"/>
+                    <property name="path" value="esb/services"/>
+                    <property name="method"/>
+                    <property name="auxiliary;index" value="6"/>
+                    <property name="auxiliary;index" value="6"/>
+                    <property name="businessEventsLabel"/>
+                    <property name="tracking:enable-default-events"/>
+                    <property name="auxiliary;index" value="6"/>
+                    <property name="address"/>
+                    <property name="encoding"/>
+                    <property name="disableTransportTransformer"/>
+                    <property name="mimeType"/>
+                    <property name="responseTimeout"/>
+                    <property name="followRedirects"/>
+                    <property name="auxiliary;index" value="6"/>
+                    <property name="auxiliary;index" value="6"/>
+                    <property name="auxiliary;index" value="6"/>
+                    <property name="connector-ref"/>
+                    <property name="ref"/>
+                    <property name="transformer-refs"/>
+                    <property name="responseTransformer-refs"/>
+                    <property name="auxiliary;index" value="6"/>
+                    <property name="auxiliary;index" value="6"/>
+                    <property name="user"/>
+                    <property name="password"/>
+                    <property name="auxiliary;index" value="6"/>
+                    <property name="contentType"/>
+                    <property name="keep-alive"/>
+                    <property name="auxiliary;index" value="6"/>
+                    <property name="auxiliary;index" value="6"/>
+                    <property name="auxiliary;index" value="6"/>
+                </properties>
+            </endpoint>
+            <pattern name="SERVICES-ECHO" type="org.mule.tooling.ui.modules.core.pattern.echo" entity-id="Echo#1">
+                <properties>
+                    <property name="auxiliary;index" value="7"/>
+                    <property name="auxiliary;index" value="7"/>
+                    <property name="auxiliary;index" value="7"/>
+                    <property name="auxiliary;index" value="7"/>
+                </properties>
+            </pattern>
+            <pattern name="SERVICES-COMPONENT" type="http://www.mulesoft.org/schema/mule/core/component" entity-id="Java#1">
+                <properties>
+                    <property name="auxiliary;index" value="8"/>
+                    <property name="auxiliary;index" value="8"/>
+                    <property name="auxiliary;index" value="8"/>
+                    <property name="class"/>
+                    <property name="auxiliary;index" value="8"/>
+                    <property name="auxiliary;index" value="8"/>
+                    <property name="auxiliary;index" value="8"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/core/spring-object;0">
+                        <property name="bean" value="ServicesComponent"/>
+                        <property name="auxiliary;wrapIn" value="9"/>
+                        <property name="auxiliary;index" value="9"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+            <pattern name="SERVICES-DATA" type="http://www.mulesoft.org/schema/mule/scripting/groovyComponent" entity-id="Groovy#1">
+                <properties>
+                    <property name="auxiliary;index" value="10"/>
+                    <property name="auxiliary;index" value="10"/>
+                    <property name="auxiliary;index" value="10"/>
+                    <property name="auxiliary;index" value="10"/>
+                    <property name="auxiliary;index" value="10"/>
+                    <property name="auxiliary;index" value="10"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/scripting/script;0">
+                        <property name="engine" value="Groovy"/>
+                        <property name="file" value="display_services.groovy"/>
+                        <property name="auxiliary;wrapIn" value="11"/>
+                        <property name="auxiliary;index" value="11"/>
+                    </property-collection>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/scripting/script-for-properties;0">
+                        <property name="engine" value="Groovy"/>
+                        <property name="file" value="display_services.groovy"/>
+                        <property name="auxiliary;wrapIn" value="11"/>
+                        <property name="auxiliary;index" value="11"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+            <pattern name="SERVICES-HTTP RESPONSE" type="http://www.mulesoft.org/schema/mule/http/response-builder" entity-id="HTTP Response Builder#1">
+                <properties>
+                    <property name="status" value="200"/>
+                    <property name="contentType" value="text/html; charset=utf-8"/>
+                    <property name="auxiliary;index" value="12"/>
+                    <property name="auxiliary;index" value="12"/>
+                    <property name="cookiesLabel"/>
+                    <property name="auxiliary;index" value="12"/>
+                    <property name="cookiesLabel"/>
+                    <property name="auxiliary;index" value="12"/>
+                    <property name="auxiliary;index" value="12"/>
+                    <property name="auxiliary;index" value="12"/>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="mule-esb-main-flow" entity-id="9078f7a0-2e3d-4848-a491-c20ced1e2703">
+        <properties>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="auxiliary;index" value="13"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="13"/>
+            <property name="auxiliary;index" value="13"/>
+            <property name="auxiliary;index" value="13"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#2">
+            <endpoint direction="Inbound" message-exchange-pattern="OneWay" name="Esb Entry HTTP" type="http://www.mulesoft.org/schema/mule/http/endpoint" entity-id="HTTP#2">
+                <properties>
+                    <property name="exchange-pattern" value="one-way"/>
+                    <property name="exchange-pattern" value="request-response"/>
+                    <property name="auxiliary;index" value="14"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/http/endpoint"/>
+                    <property name="auxiliary;index" value="14"/>
+                    <property name="httpLabel"/>
+                    <property name="host"/>
+                    <property name="port"/>
+                    <property name="path"/>
+                    <property name="method"/>
+                    <property name="auxiliary;index" value="14"/>
+                    <property name="auxiliary;index" value="14"/>
+                    <property name="businessEventsLabel"/>
+                    <property name="tracking:enable-default-events"/>
+                    <property name="auxiliary;index" value="14"/>
+                    <property name="address" value="http://localhost:9999/esb"/>
+                    <property name="encoding"/>
+                    <property name="disableTransportTransformer"/>
+                    <property name="mimeType"/>
+                    <property name="responseTimeout"/>
+                    <property name="followRedirects"/>
+                    <property name="auxiliary;index" value="14"/>
+                    <property name="auxiliary;index" value="14"/>
+                    <property name="auxiliary;index" value="14"/>
+                    <property name="connector-ref"/>
+                    <property name="ref"/>
+                    <property name="transformer-refs"/>
+                    <property name="responseTransformer-refs"/>
+                    <property name="auxiliary;index" value="14"/>
+                    <property name="auxiliary;index" value="14"/>
+                    <property name="user"/>
+                    <property name="password"/>
+                    <property name="auxiliary;index" value="14"/>
+                    <property name="contentType"/>
+                    <property name="keep-alive"/>
+                    <property name="auxiliary;index" value="14"/>
+                    <property name="auxiliary;index" value="14"/>
+                    <property name="auxiliary;index" value="14"/>
+                </properties>
+            </endpoint>
+            <pattern name="Logger" type="http://www.mulesoft.org/schema/mule/core/logger" entity-id="Logger#1">
+                <properties>
+                    <property name="message" value="===router0=== #[groovy:message.toString()]"/>
+                    <property name="level" value="DEBUG"/>
+                    <property name="category"/>
+                    <property name="auxiliary;index" value="15"/>
+                    <property name="auxiliary;index" value="15"/>
+                    <property name="auxiliary;index" value="15"/>
+                </properties>
+            </pattern>
+            <pattern name="DB Logger(1)" type="http://www.mulesoft.org/schema/mule/core/component" entity-id="Java#2">
+                <properties>
+                    <property name="auxiliary;index" value="16"/>
+                    <property name="auxiliary;index" value="16"/>
+                    <property name="auxiliary;index" value="16"/>
+                    <property name="class"/>
+                    <property name="auxiliary;index" value="16"/>
+                    <property name="auxiliary;index" value="16"/>
+                    <property name="auxiliary;index" value="16"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/core/spring-object;0">
+                        <property name="bean" value="DBLogComponent"/>
+                        <property name="auxiliary;wrapIn" value="17"/>
+                        <property name="auxiliary;index" value="17"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+            <pattern name="Router List" type="http://www.mulesoft.org/schema/mule/core/component" entity-id="Java#3">
+                <properties>
+                    <property name="auxiliary;index" value="18"/>
+                    <property name="auxiliary;index" value="18"/>
+                    <property name="auxiliary;index" value="18"/>
+                    <property name="class"/>
+                    <property name="auxiliary;index" value="18"/>
+                    <property name="auxiliary;index" value="18"/>
+                    <property name="auxiliary;index" value="18"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/core/spring-object;0">
+                        <property name="bean" value="RoutersComponent"/>
+                        <property name="auxiliary;wrapIn" value="19"/>
+                        <property name="auxiliary;index" value="19"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+            <scope name="Async" type="http://www.mulesoft.org/schema/mule/core/async" entity-id="Async#1">
+                <properties>
+                    <property name="processingStrategy"/>
+                    <property name="auxiliary;index" value="20"/>
+                    <property name="auxiliary;index" value="20"/>
+                    <property name="auxiliary;index" value="20"/>
+                </properties>
+                <compartment entity-id="compartment#1">
+                    <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#3">
+                        <pattern name="Router Logger" type="http://www.mulesoft.org/schema/mule/core/logger" entity-id="Logger#2">
+                            <properties>
+<property name="message" value="===router1=== #[groovy:message.toString()]"/>
+<property name="level" value="DEBUG"/>
+<property name="category"/>
+<property name="auxiliary;index" value="21"/>
+<property name="auxiliary;index" value="21"/>
+<property name="auxiliary;index" value="21"/>
+                            </properties>
+                        </pattern>
+                    </lane>
+                </compartment>
+            </scope>
+        </lane>
+    </flow>
+    <description></description>
+</mule-configuration>
